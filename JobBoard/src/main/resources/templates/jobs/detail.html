@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      lang="en">
+<head>
+    <title th:text="${job.title} + ' - Job Board'">Job Detail</title>
+</head>
+<body>
+<main th:fragment="main">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- ========================================
+                 BACK BUTTON
+                 ======================================== -->
+            <div class="mb-3">
+                <a th:href="@{/jobs}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Back to Listings</span>
+                </a>
+            </div>
+
+            <!-- ========================================
+                 MAIN JOB CARD
+                 ======================================== -->
+            <div class="card mb-4">
+                <!-- Card Header with Job Title -->
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2" th:text="${job.title}">Job Title</h3>
+                            <div class="d-flex align-items-center text-white-50">
+                                <i class="bi bi-building me-2"></i>
+                                <span th:text="${job.company.name}">Company Name</span>
+                            </div>
+                        </div>
+                        <div>
+                            <a th:href="@{/jobs/edit/{id}(id=${job.id})}"
+                               class="btn btn-light btn-sm">
+                                <i class="bi bi-pencil-fill"></i>
+                                <span>Edit Job</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body">
+                    <!-- Job Meta Information -->
+                    <div class="row g-4 mb-4">
+                        <!-- Left Column: Job Info -->
+                        <div class="col-md-8">
+                            <!-- Badges -->
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-primary fs-6">
+                                    <i class="bi bi-briefcase-fill"></i>
+                                    <span th:text="${job.jobType.displayName}">Job Type</span>
+                                </span>
+                                <span class="badge bg-secondary fs-6">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <span th:text="${job.location}">Location</span>
+                                </span>
+                                <span th:if="${job.salary}" class="badge bg-success fs-6">
+                                    <i class="bi bi-cash"></i>
+                                    <span th:text="${job.salary}">Salary</span>
+                                </span>
+                            </div>
+
+                            <!-- Posted Date -->
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-calendar3"></i> Posted on:
+                                <strong th:text="${#temporals.format(job.postedDate, 'MMMM dd, yyyy')}">Date</strong>
+                            </p>
+                        </div>
+
+                        <!-- Right Column: Company Info Card -->
+                        <div class="col-md-4">
+                            <div class="card bg-light border-0 h-100">
+                                <div class="card-body">
+                                    <h6 class="fw-bold mb-3">
+                                        <i class="bi bi-info-circle-fill text-primary"></i>
+                                        Company Information
+                                    </h6>
+
+                                    <!-- Company Name with Avatar -->
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="avatar-circle text-white me-2"
+                                                 style="width: 30px; height: 30px; font-size: 0.875rem;">
+                                                <span th:text="${#strings.substring(job.company.name, 0, 1)}">C</span>
+                                            </div>
+                                            <strong th:text="${job.company.name}">Company Name</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1">
+                                            <i class="bi bi-geo-alt"></i> Address
+                                        </small>
+                                        <span th:text="${job.company.address}">Address</span>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1">
+                                            <i class="bi bi-envelope"></i> Email
+                                        </small>
+                                        <a th:href="'mailto:' + ${job.company.email}"
+                                           th:text="${job.company.email}"
+                                           class="text-decoration-none"
+                                           title="Send email">
+                                            Email
+                                        </a>
+                                    </div>
+
+                                    <!-- Website -->
+                                    <div th:if="${job.company.website}">
+                                        <small class="text-muted d-block mb-1">
+                                            <i class="bi bi-globe"></i> Website
+                                        </small>
+                                        <a th:href="${job.company.website}"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           class="text-decoration-none"
+                                           title="Visit company website">
+                                            Visit Website <i class="bi bi-box-arrow-up-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job Description Section -->
+                    <div class="mt-4">
+                        <h5 class="mb-3">
+                            <i class="bi bi-file-text text-primary"></i>
+                            Job Description
+                        </h5>
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <p th:text="${job.description}"
+                                   style="white-space: pre-wrap; line-height: 1.8; color: #475569;">
+                                    Job description
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-wrap gap-2 mt-4 pt-4 border-top">
+                        <a th:href="@{/jobs/edit/{id}(id=${job.id})}"
+                           class="btn btn-primary">
+                            <i class="bi bi-pencil-fill"></i>
+                            <span>Edit This Job</span>
+                        </a>
+                        <a th:href="@{/jobs/delete/{id}(id=${job.id})}"
+                           class="btn btn-outline-danger"
+                           onclick="return confirmDelete('Are you sure you want to delete this job posting?')">
+                            <i class="bi bi-trash-fill"></i>
+                            <span>Delete Job</span>
+                        </a>
+                        <a th:href="@{/jobs}"
+                           class="btn btn-outline-secondary ms-auto">
+                            <i class="bi bi-list-ul"></i>
+                            <span>View All Jobs</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================
+                 JOB STATISTICS CARD
+                 ======================================== -->
+            <div class="card border-0" style="background: linear-gradient(135deg, #667eea15, #764ba215);">
+                <div class="card-body">
+                    <div class="row text-center g-4">
+                        <!-- Job Type -->
+                        <div class="col-6 col-md-3">
+                            <div class="mb-2">
+                                <i class="bi bi-briefcase-fill text-primary" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <h6 class="mb-1 fw-bold">Job Type</h6>
+                            <p class="text-muted mb-0" th:text="${job.jobType.displayName}">Type</p>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="col-6 col-md-3">
+                            <div class="mb-2">
+                                <i class="bi bi-geo-alt-fill text-secondary" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <h6 class="mb-1 fw-bold">Location</h6>
+                            <p class="text-muted mb-0" th:text="${job.location}">Location</p>
+                        </div>
+
+                        <!-- Salary -->
+                        <div class="col-6 col-md-3" th:if="${job.salary}">
+                            <div class="mb-2">
+                                <i class="bi bi-cash text-success" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <h6 class="mb-1 fw-bold">Salary Range</h6>
+                            <p class="text-muted mb-0" th:text="${job.salary}">Salary</p>
+                        </div>
+
+                        <!-- Posted Date -->
+                        <div class="col-6 col-md-3">
+                            <div class="mb-2">
+                                <i class="bi bi-calendar3 text-info" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <h6 class="mb-1 fw-bold">Posted Date</h6>
+                            <p class="text-muted mb-0"
+                               th:text="${#temporals.format(job.postedDate, 'MMM dd, yyyy')}">Date</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================
+                 APPLY SECTION (Optional)
+                 ======================================== -->
+            <div class="card mt-4 border-primary">
+                <div class="card-body text-center">
+                    <h5 class="mb-3">
+                        <i class="bi bi-send-fill text-primary"></i>
+                        Interested in this position?
+                    </h5>
+                    <p class="text-muted mb-3">
+                        Contact the company directly to apply for this position.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <a th:href="'mailto:' + ${job.company.email} + '?subject=Application for ' + ${job.title}"
+                           class="btn btn-primary">
+                            <i class="bi bi-envelope-fill"></i>
+                            <span>Email Company</span>
+                        </a>
+                        <a th:if="${job.company.website}"
+                           th:href="${job.company.website}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-globe"></i>
+                            <span>Visit Company Website</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
